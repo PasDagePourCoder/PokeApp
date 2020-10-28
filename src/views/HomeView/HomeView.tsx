@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -10,17 +10,20 @@ import {
   FlatList,
   Button,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { listPokeOriginal } from '../../data/PokemonList';
 import * as commonStyle from '../../utils/commonStyle';
 
 import { Pokemon } from '../../models/Pokemon';
+import { getRandomInt, shuffle } from '../../utils/utils';
 
 
 const HomeView = () => {
 
   const [counterPokedex, setCounterPokedex] = useState(0);
-  const [listPoke, setListPoke] = useState(listPokeOriginal);
+  const [listPoke, setListPoke] = useState<Pokemon[]>(undefined);
+  const [isDataReceived, setIsDataReceived] = useState(false);
 
 
   const getNamePokemon = (namePokemon: string) => {
@@ -51,14 +54,46 @@ const HomeView = () => {
     }
   }
 
+  const fetchPokemon = () => {
+    const url = 'https://pokeapi.co/api/v2/pokemon?limit=151';
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        const newArray = json.results.map((pokemon: any, index: number) => {
+
+          // TODO: level between 40 & 80
+            let indexPokedex = index + 1;
+            pokemon.id = indexPokedex;
+            pokemon.level = getRandomInt(40, 80);
+            pokemon.isMale = true;
+            pokemon.src = 'https://pokeres.bastionbot.org/images/pokemon/' + indexPokedex + '.png';
+
+            return pokemon;
+        })
+        setListPoke(shuffle(newArray));
+        setIsDataReceived(true);
+      })
+      .catch(error => {
+        console.log('Error: ', error);
+      })
+  }
+
+  useEffect(() => {
+      fetchPokemon();
+  }, [])
+
   return (
     <View style={styles.main_container}>
       <View style={styles.title_container}>
         <Text style={styles.text_title}>Pokédex Application</Text>
       </View>
       <View style={styles.pokemon_container}>
+        {isDataReceived ? 
       <PokemonInfo id={listPoke[counterPokedex].id} name={listPoke[counterPokedex].name} level={listPoke[counterPokedex].level}
         isMale={listPoke[counterPokedex].isMale} src={listPoke[counterPokedex].src} onClickPokemon={modifyLevel} />
+        :
+        <Text>This is loading</Text> 
+      }
         </View>
         <View style={styles.button_container}>
         <TouchableOpacity
@@ -87,7 +122,7 @@ const PokemonInfo = ({ name, level, isMale, src, onClickPokemon }: Pokemon) => {
       <TouchableOpacity
         onPress={() => onClickPokemon()}
       >
-        <Image source={src} style={styles.imagePokemon} />
+        <Image source={{uri: src}} style={styles.imagePokemon} />
       </TouchableOpacity>
       <Text>His name is {name}, his levelPokemon is {level}.</Text>
       {isMale ?
