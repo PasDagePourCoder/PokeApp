@@ -27,15 +27,22 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import HomeView from './views/HomeView/HomeView';
 import TestView from './views/TestView/TestView';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import PokemonDetailsView from './views/PokemonDetailsView/PokemonDetailsView';
 
-declare const global: {HermesInternal: null | {}};
-
+const Stack = createStackNavigator();
 
 const App = () => {
 
   return (
     <>
-      <HomeView/>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeView} options={{title: '', headerShown: false}}/>
+        <Stack.Screen name="Details" component={PokemonDetailsView} options={{title: 'Characteristics of the Pokemon'}}/>
+      </Stack.Navigator>
+    </NavigationContainer>
     </>
   );
 };
