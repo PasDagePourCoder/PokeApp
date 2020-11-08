@@ -30,18 +30,63 @@ import TestView from './views/TestView/TestView';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import PokemonDetailsView from './views/PokemonDetailsView/PokemonDetailsView';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import MyPokemonView from './views/MyPokemonView/MyPokemonView';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Stack = createStackNavigator();
 
 const App = () => {
+
+
+  const HomeStack = createStackNavigator();
+
+  function HomeStackScreen() {
+    return (
+      <HomeStack.Navigator>
+        <HomeStack.Screen name="Home" component={HomeView} options={{title: '', headerShown: false}} />
+        <HomeStack.Screen name="Details" component={PokemonDetailsView} options={{title: 'Characteristics of the Pokemon'}} />
+      </HomeStack.Navigator>
+    );
+  }
+
+  const MyPokemonStack = createStackNavigator();
+
+  function MyPokemonStackScreen() {
+    return (
+      <MyPokemonStack.Navigator>
+        <MyPokemonStack.Screen name="MyPokemon" component={MyPokemonView} options={{title: 'My Pokemon Team'}}/>
+        <MyPokemonStack.Screen name="Details" component={PokemonDetailsView} options={{title: 'Characteristics of the Pokemon'}} />
+      </MyPokemonStack.Navigator>
+    );
+  }
+
+  const Tab = createBottomTabNavigator();
 
   return (
     <>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeView} options={{title: '', headerShown: false}}/>
-        <Stack.Screen name="Details" component={PokemonDetailsView} options={{title: 'Characteristics of the Pokemon'}}/>
-      </Stack.Navigator>
+    <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
+    
+                if (route.name === 'Home') {
+                  return <FontAwesomeIcon name="home" size={size} color={color}/>
+                } else if (route.name === 'MyPokemon') {
+                  return <MaterialCommunityIcons name="pokeball" size={size} color={color}/>
+                }
+    
+              },
+            })}
+            tabBarOptions={{
+              activeTintColor: 'tomato',
+              inactiveTintColor: 'gray',
+            }}
+    >
+        <Tab.Screen name="Home" component={HomeStackScreen} />
+        <Tab.Screen name="MyPokemon" component={MyPokemonStackScreen} />
+      </Tab.Navigator>
     </NavigationContainer>
     </>
   );
