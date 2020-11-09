@@ -34,6 +34,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MyPokemonView from './views/MyPokemonView/MyPokemonView';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { PersistGate } from 'redux-persist/es/integration/react';
+import { Provider } from 'react-redux';
+import Store from './store/configureStore';
+import {persistStore} from "redux-persist";
 
 
 const App = () => {
@@ -63,8 +67,14 @@ const App = () => {
 
   const Tab = createBottomTabNavigator();
 
+  //@ts-ignore
+  let persistor = persistStore(Store);
+
   return (
     <>
+      <Provider store={Store}>
+      <PersistGate loading={null} persistor={persistor}>
+
     <NavigationContainer>
     <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -88,6 +98,8 @@ const App = () => {
         <Tab.Screen name="MyPokemon" component={MyPokemonStackScreen} />
       </Tab.Navigator>
     </NavigationContainer>
+   </PersistGate> 
+    </Provider>
     </>
   );
 };

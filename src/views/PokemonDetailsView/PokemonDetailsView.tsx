@@ -12,15 +12,21 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { Card, ListItem, Icon } from 'react-native-elements'
+import { connect } from 'react-redux';
 import * as commonStyle from '../../utils/commonStyle';
 
 const PokemonDetailsView = (props: any) => {
 
     /* 2. Get the param */
-    const { id, name, src } = props.route.params;
+    const { id, name, src, isReleasePossible } = props.route.params;
     const [weight, setWeight] = useState(undefined);
     const [height, setHeight] = useState(undefined);
     const [arrayTypes, setArrayTypes] = useState([]);
+
+    const releasePokemon = (idPokemon: number) => {
+        const action = { type: 'REMOVE_POKEMON_IN_LIST', value: idPokemon};
+        props.dispatch(action);  
+    }
 
 
     useEffect(() => {
@@ -74,6 +80,7 @@ const PokemonDetailsView = (props: any) => {
                         </View>
                     </View>
                 </View>
+                {isReleasePossible && <Button title="Release the Pokemon" onPress={() => releasePokemon(id)} />}
             </Card>
         </View>
     );
@@ -94,4 +101,13 @@ const styles = StyleSheet.create({
     }
 });
 
-export default PokemonDetailsView;
+
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        dispatch: (action: any) => { dispatch(action); },
+    };
+};
+
+
+export default connect(mapDispatchToProps)(PokemonDetailsView);

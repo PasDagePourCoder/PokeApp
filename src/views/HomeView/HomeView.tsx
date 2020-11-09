@@ -17,7 +17,8 @@ import * as commonStyle from '../../utils/commonStyle';
 
 import { Pokemon } from '../../models/Pokemon';
 import { getRandomInt, shuffle } from '../../utils/utils';
-
+//@ts-ignore
+import {connect} from 'react-redux';
 
 const HomeView = (props: any) => {
 
@@ -25,7 +26,15 @@ const HomeView = (props: any) => {
   const [listPoke, setListPoke] = useState<Pokemon[]>(undefined);
   const [isDataReceived, setIsDataReceived] = useState(false);
 
-  console.log('Props: ', props);
+
+  const onCapturePokemon = () => {
+      const currentPokemon = listPoke[counterPokedex];
+
+      console.log('Array Pokemon Captured: ', props.arrayPokemonCaptured)
+
+      const action = { type: 'ADD_TO_LIST_POKEMON', value: currentPokemon};
+      props.dispatch(action);
+  }
 
   const getNamePokemon = (namePokemon: string) => {
     console.log('My name is', namePokemon);
@@ -36,7 +45,8 @@ const HomeView = (props: any) => {
     props.navigation.navigate('Details', {
       id: idPokemon,
       name: namePokemon,
-      src: srcPokemon
+      src: srcPokemon,
+      isReleasePossible: false
     });
   }
 
@@ -69,7 +79,6 @@ const HomeView = (props: any) => {
     fetch(url)
       .then(response => response.json())
       .then(json => {
-        console.log(json);
 
         const newArray = json.results.map((pokemon: any, index: number) => {
 
@@ -117,11 +126,18 @@ const HomeView = (props: any) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.buttonNextPrevious}
+            onPress={() => onCapturePokemon()}
+            >
+              <Image source={require('../../assets/icons/pokeball.png')} style={styles.iconButton} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonNextPrevious}
             onPress={() => onNext()}
             >
               <Image source={require('../../assets/icons/right-arrow.png')} style={styles.iconButton} />
           </TouchableOpacity>
       </View>
+      <Text>Length: {props.arrayPokemonCaptured.length}</Text>
     </View>
   );
 };
@@ -198,4 +214,18 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeView;
+
+const mapStateToProps = (state: any) => {
+  return {
+      arrayPokemonCaptured: state.arrayPokemonCaptured.arrayPokemonCaptured
+  };
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+      dispatch: (action: any) => { dispatch(action); },
+  };
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeView);

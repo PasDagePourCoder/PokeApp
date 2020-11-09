@@ -12,23 +12,26 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { Card, ListItem, Icon } from 'react-native-elements'
+import { connect } from 'react-redux';
 import { listPokeOriginal } from '../../data/PokemonList';
+import { Pokemon } from '../../models/Pokemon';
 import * as commonStyle from '../../utils/commonStyle';
 
 const MyPokemonView = (props: any) => {
 
     const onViewPokemonDetails = (idPokemon: number, namePokemon: string, srcPokemon: string) => {
         props.navigation.navigate('Details', {
-          id: idPokemon,
-          name: namePokemon,
-          src: srcPokemon
+            id: idPokemon,
+            name: namePokemon,
+            src: srcPokemon,
+            isReleasePossible: true
         });
-      }
+    }
 
     return (
         <View>
             <FlatList
-                data={listPokeOriginal}
+                data={props.arrayPokemonCaptured}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) =>
                     <PokemonItem pokemon={item} onClickPokemon={onViewPokemonDetails}/>}
@@ -40,14 +43,14 @@ const MyPokemonView = (props: any) => {
 
 const PokemonItem = (props: any) => {
 
-    const { pokemon, onClickPokemon } = props;
+    const { pokemon, onClickPokemon, onReleasePokemon } = props;
 
     return (
         <View>
             <TouchableOpacity style={styles.main_container} onPress={() => onClickPokemon(pokemon.id, pokemon.name, pokemon.src)}>
                 <Image
                     style={styles.image}
-                    source={{uri: pokemon.src}}
+                    source={{ uri: pokemon.src }}
                 />
                 <View style={styles.content_container}>
                     <View style={styles.header_container}>
@@ -115,4 +118,12 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MyPokemonView;
+
+const mapStateToProps = (state: any) => {
+    return {
+        arrayPokemonCaptured: state.arrayPokemonCaptured.arrayPokemonCaptured
+    };
+};
+
+  
+export default connect(mapStateToProps)(MyPokemonView);
