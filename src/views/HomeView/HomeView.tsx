@@ -137,7 +137,6 @@ const HomeView = (props: any) => {
               <Image source={require('../../assets/icons/right-arrow.png')} style={styles.iconButton} />
           </TouchableOpacity>
       </View>
-      <Text>Length: {props.arrayPokemonCaptured.length}</Text>
     </View>
   );
 };
