@@ -19,6 +19,7 @@ import { Pokemon } from '../../models/Pokemon';
 import { getRandomInt, shuffle } from '../../utils/utils';
 //@ts-ignore
 import {connect} from 'react-redux';
+import auth from '@react-native-firebase/auth';
 
 const HomeView = (props: any) => {
 
@@ -26,7 +27,21 @@ const HomeView = (props: any) => {
   const [listPoke, setListPoke] = useState<Pokemon[]>(undefined);
   const [isDataReceived, setIsDataReceived] = useState(false);
 
+    const signInAnonymous = () => {
+        console.log('Testing sign in');
+        auth()
+            .signInAnonymously()
+            .then(() => {
+                console.log('User signed in anonymously');
+            })
+            .catch(error => {
+                if (error.code === 'auth/operation-not-allowed') {
+                    console.log('Enable anonymous in your firebase console.');
+                }
 
+                console.error(error);
+            });
+    }
   const onCapturePokemon = () => {
       const currentPokemon = listPoke[counterPokedex];
 
@@ -107,7 +122,7 @@ const HomeView = (props: any) => {
   return (
     <View style={styles.main_container}>
       <View style={styles.title_container}>
-        <Text style={styles.text_title}>Pokédex Application</Text>
+        <Text style={styles.text_title} onPress={() => signInAnonymous()}>Pokédex Application</Text>
       </View>
       <View style={styles.pokemon_container}>
         {isDataReceived ? 
