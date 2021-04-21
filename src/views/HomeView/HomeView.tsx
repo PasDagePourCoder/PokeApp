@@ -26,23 +26,14 @@ const HomeView = (props: any) => {
   const [counterPokedex, setCounterPokedex] = useState(0);
   const [listPoke, setListPoke] = useState<Pokemon[]>(undefined);
   const [isDataReceived, setIsDataReceived] = useState(false);
+  const [userID, setUserID] = useState<string>('');
 
-    const signInAnonymous = () => {
-        console.log('Testing sign in');
-        auth()
-            .signInAnonymously()
-            .then(() => {
-                console.log('User signed in anonymously');
-            })
-            .catch(error => {
-                if (error.code === 'auth/operation-not-allowed') {
-                    console.log('Enable anonymous in your firebase console.');
-                }
+  useEffect(() => {
+      setUserID(auth().currentUser.uid);
+  }, []);
 
-                console.error(error);
-            });
-    }
-  const onCapturePokemon = () => {
+
+    const onCapturePokemon = () => {
       const currentPokemon = listPoke[counterPokedex];
 
       console.log('Array Pokemon Captured: ', props.arrayPokemonCaptured)
@@ -64,6 +55,15 @@ const HomeView = (props: any) => {
       isReleasePossible: false
     });
   }
+
+  const onSignOut = () => {
+      auth()
+          .signOut()
+          .then(() => {
+              console.log('User signed out!');
+              props.navigation.navigate('Login');
+          });
+  };
 
   const modifyLevel = () => {
 
@@ -122,7 +122,9 @@ const HomeView = (props: any) => {
   return (
     <View style={styles.main_container}>
       <View style={styles.title_container}>
-        <Text style={styles.text_title} onPress={() => signInAnonymous()}>Pokédex Application</Text>
+        <Text style={styles.text_title}>Pokédex Application</Text>
+        <Text onPress={() => onSignOut()}>Sign Out</Text>
+        <Text>User ID: {userID}</Text>
       </View>
       <View style={styles.pokemon_container}>
         {isDataReceived ? 
