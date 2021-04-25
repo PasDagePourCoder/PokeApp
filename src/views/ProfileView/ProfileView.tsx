@@ -18,15 +18,17 @@ import User from '../../models/User';
 import auth from "@react-native-firebase/auth";
 import firebase from '@react-native-firebase/app';
 import firestore from "@react-native-firebase/firestore";
+import ImagePicker from 'react-native-image-crop-picker';
 
 const ProfileView = (props: any) => {
 
+    const [imageURL, setImageURL] = useState<any>(require('../../assets/images/mystery_pokemon.png'));
     const userID = useSelector((state: any) => state.userIDStore.userID);
     const [user, setUser] = useState<User>({
         age: 0,
         favoritePokemon: '',
         id: '0',
-        image: '../../assets/images/sacha.jpeg',
+        image: '',
         name: ''
     });
 
@@ -55,6 +57,18 @@ const ProfileView = (props: any) => {
             });
     };
 
+    const onSelectImage = () => {
+        ImagePicker.openPicker({
+            width: 300,
+            height: 400,
+            cropping: true
+        }).then(image => {
+            console.log(image);
+            setImageURL({uri: image.path});
+        });
+
+    };
+
     return (
         <View>
             {user.id === '0' ?
@@ -65,7 +79,7 @@ const ProfileView = (props: any) => {
                     <View>
                         <View style={{alignItems: 'center'}}>
                             <Image style={styles.image}
-                                   source={require('../../assets/images/sacha.jpeg')}
+                                   source={imageURL}
                             />
                         </View>
                         <View style={styles.details_container}>
@@ -74,6 +88,7 @@ const ProfileView = (props: any) => {
                                 <Text>Pokémon Favori: {user.favoritePokemon}</Text>
                             </View>
                         </View>
+                        <Button title='Changer Image' onPress={() => onSelectImage()} color='#ffa07a'/>
                         <Button title='Se Déconnecter' onPress={() => onSignOut()} color='#ffa07a'/>
                     </View>
                 </Card>
