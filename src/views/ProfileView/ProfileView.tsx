@@ -19,6 +19,9 @@ import auth from "@react-native-firebase/auth";
 import firebase from '@react-native-firebase/app';
 import firestore from "@react-native-firebase/firestore";
 import ImagePicker from 'react-native-image-crop-picker';
+import {getFormattedDate} from "../../utils/utils";
+import {createStorageReferenceToFile, updateInformationUserFirebase} from "../../services/uploadService";
+import storage from '@react-native-firebase/storage';
 
 const ProfileView = (props: any) => {
 
@@ -41,6 +44,8 @@ const ProfileView = (props: any) => {
                 console.log('User data: ', documentSnapshot.data());
                 //@ts-ignore
                 setUser(documentSnapshot.data());
+                //@ts-ignore
+                setImageURL({uri: documentSnapshot.data().image});
             });
 
         // Stop listening for updates when no longer required
@@ -57,6 +62,12 @@ const ProfileView = (props: any) => {
             });
     };
 
+    const _uploadImageToFireBase = (image: any, pathFirestore: string) => {
+        const fileSource = image.path;
+        const storageRef = createStorageReferenceToFile(pathFirestore);
+        return storageRef.putFile(fileSource);
+    };
+
     const onSelectImage = () => {
         ImagePicker.openPicker({
             width: 300,
@@ -65,8 +76,25 @@ const ProfileView = (props: any) => {
         }).then(image => {
             console.log(image);
             setImageURL({uri: image.path});
-        });
+            const pathFirestorage = 'users/' + userID + '/images/img_' + getFormattedDate();
 
+            Promise.resolve(_uploadImageToFireBase(image, pathFirestorage))
+                .then(() => {
+                    console.log('The picture has been correctly uploaded.');
+                    console.log('Storage Ref.');
+                    // @ts-ignore
+                    storage().ref(pathFirestorage).getDownloadURL().then((downloadURL) => {
+                        console.log('Download URL: ', downloadURL);
+                        updateInformationUserFirebase(userID, {image: downloadURL})
+                            .then(() => {
+                                console.log('Success: Updated image in Firebase of the user: ', userID);
+                            })
+                            .catch((error: any) => console.log(error));
+                    })
+                        .catch((error: any) => console.log(error))
+                })
+                .catch((error) => console.log(error));
+        });
     };
 
     return (
