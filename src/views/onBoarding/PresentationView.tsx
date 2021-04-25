@@ -14,6 +14,9 @@ import {
 import { Card, ListItem, Icon } from 'react-native-elements';
 import t from 'tcomb-form-native';
 import {LetterOnly, MinimumAge} from "../../utils/regex";
+import User from '../../models/User';
+import {useSelector} from "react-redux";
+import {addInformationUserFirebase} from "../../services/uploadService";
 
 let Form = t.form.Form;
 
@@ -44,6 +47,7 @@ const options = {
 const PresentationView = (props: any) => {
 
     const [form, setForm] = useState(undefined);
+    const userID = useSelector((state: any) => state.userIDStore.userID);
 
 
     const handleSubmitForm = () => {
@@ -51,7 +55,24 @@ const PresentationView = (props: any) => {
         console.log('Values: ', valuesForm);
         if (valuesForm) {
             console.log('Form validated');
+            saveDataInFirebase(valuesForm);
         }
+    }
+
+    const saveDataInFirebase = (valuesForm: any) => {
+        const user: User = {
+            age: valuesForm.age,
+            favoritePokemon: valuesForm.favoritePokemon,
+            id: userID,
+            image: "",
+            name: valuesForm.name
+        };
+
+        addInformationUserFirebase(userID, user)
+            .then(() => {
+                console.log('The info has been added for the user: ', userID);
+                props.navigation.navigate('Home');
+            }).catch((error) => console.log(error));
     }
 
     return (
