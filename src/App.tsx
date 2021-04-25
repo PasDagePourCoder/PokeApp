@@ -40,7 +40,8 @@ import Store from './store/configureStore';
 import {persistStore} from "redux-persist";
 import LoginView from "./views/LoginView/LoginView";
 import SignUpView from "./views/SignUpView/SignUpView";
-
+import ProfileView from "./views/ProfileView/ProfileView";
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const App = () => {
 
@@ -50,8 +51,20 @@ const App = () => {
   function HomeStackScreen() {
     return (
       <HomeStack.Navigator>
-        <HomeStack.Screen name="Home" component={HomeView} options={{title: '', headerShown: false}} />
+        <HomeStack.Screen name="Home" component={HomeView}
+                          options={({ navigation, route }) => ({
+                              unmountInactiveRoutes: true,
+                              title: '',
+                              headerStyle: {
+                                  backgroundColor: '#fff',
+                              },
+                              headerLeft: () => (
+                                  <Icon style={{ marginLeft: 15 }} name="user-circle" size={30} color={'black'} onPress={() => navigation.navigate('Profile')} />
+                              )
+                          })}
+        />
         <HomeStack.Screen name="Details" component={PokemonDetailsView} options={{title: 'Characteristics of the Pokemon'}} />
+        <HomeStack.Screen name="Profile" component={ProfileView} options={{title: 'My Profile'}} />
       </HomeStack.Navigator>
     );
   }
@@ -104,7 +117,7 @@ const App = () => {
   function MainStackScreen() {
     return (
         <MainStack.Navigator initialRouteName={'Login'}>
-          <MainStack.Screen name={'Home'} component={TabNavigation}/>
+          <MainStack.Screen name={'Home'} component={TabNavigation} options={{headerShown: false}}/>
           <MainStack.Screen name={'Login'} component={LoginView} options={{headerShown: false}}/>
           <MainStack.Screen name={'SignUp'} component={SignUpView} options={{headerShown: false}}/>
         </MainStack.Navigator>

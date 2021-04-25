@@ -12,12 +12,14 @@ import {
     TouchableOpacity, TextInput,
 } from 'react-native';
 import auth from "@react-native-firebase/auth";
+import {useDispatch} from "react-redux";
 
 
 const SignUpView = (props: any) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
 
     const onSignUp = () => {
         console.log('Sign Up');
@@ -25,6 +27,11 @@ const SignUpView = (props: any) => {
             .createUserWithEmailAndPassword(email, password)
             .then(() => {
                 console.log('User account created & signed in!');
+                const uid = auth().currentUser.uid;
+                console.log('User is Logged, ID is:', uid);
+
+                const action = {type: 'SET_USER_ID', value: uid};
+                dispatch(action);
                 props.navigation.navigate('Home');
             })
             .catch(error => {

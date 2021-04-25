@@ -19,18 +19,12 @@ import { Pokemon } from '../../models/Pokemon';
 import { getRandomInt, shuffle } from '../../utils/utils';
 //@ts-ignore
 import {connect} from 'react-redux';
-import auth from '@react-native-firebase/auth';
 
 const HomeView = (props: any) => {
 
   const [counterPokedex, setCounterPokedex] = useState(0);
   const [listPoke, setListPoke] = useState<Pokemon[]>(undefined);
   const [isDataReceived, setIsDataReceived] = useState(false);
-  const [userID, setUserID] = useState<string>('');
-
-  useEffect(() => {
-      setUserID(auth().currentUser.uid);
-  }, []);
 
 
     const onCapturePokemon = () => {
@@ -54,15 +48,6 @@ const HomeView = (props: any) => {
       src: srcPokemon,
       isReleasePossible: false
     });
-  }
-
-  const onSignOut = () => {
-      auth()
-          .signOut()
-          .then(() => {
-              console.log('User signed out!');
-              props.navigation.navigate('Login');
-          });
   };
 
   const modifyLevel = () => {
@@ -123,8 +108,6 @@ const HomeView = (props: any) => {
     <View style={styles.main_container}>
       <View style={styles.title_container}>
         <Text style={styles.text_title}>Pokédex Application</Text>
-        <Text onPress={() => onSignOut()}>Sign Out</Text>
-        <Text>User ID: {userID}</Text>
       </View>
       <View style={styles.pokemon_container}>
         {isDataReceived ? 

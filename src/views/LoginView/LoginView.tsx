@@ -12,12 +12,14 @@ import {
     TouchableOpacity, TextInput,
 } from 'react-native';
 import auth from "@react-native-firebase/auth";
+import {useDispatch} from "react-redux";
 
 
 const LoginView = (props: any) => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
 
     useEffect(() => {
         _isUserAuthenticated();
@@ -26,7 +28,10 @@ const LoginView = (props: any) => {
 
     const _isUserAuthenticated = () => {
         if (auth().currentUser) {
-            console.log('User is Logged, ID is:', auth().currentUser.uid);
+            const uid = auth().currentUser.uid;
+            console.log('User is Logged, ID is:', uid);
+            const action = {type: 'SET_USER_ID', value: uid};
+            dispatch(action);
             props.navigation.navigate('Home');
         } else {
             console.log('User is not Logged');
@@ -40,6 +45,8 @@ const LoginView = (props: any) => {
             .then((response) => {
                 const uid = response.user.uid;
                 console.log('The user is connected, his ID is: ', uid);
+                const action = {type: 'SET_USER_ID', value: uid};
+                dispatch(action);
                 props.navigation.navigate('Home');
             })
             .catch(error => {
