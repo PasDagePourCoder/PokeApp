@@ -42,6 +42,7 @@ import LoginView from "./views/LoginView/LoginView";
 import SignUpView from "./views/SignUpView/SignUpView";
 import ProfileView from "./views/ProfileView/ProfileView";
 import Icon from 'react-native-vector-icons/FontAwesome';
+import PresentationView from "./views/onBoarding/PresentationView";
 
 const App = () => {
 
@@ -92,6 +93,7 @@ const App = () => {
         >
           <Tab.Screen name="Home" component={HomeStackScreen} />
           <Tab.Screen name="MyPokemon" component={MyPokemonStackScreen} />
+          <Tab.Screen name="Presentation" component={PresentationView} />
         </Tab.Navigator>
     )
   }
