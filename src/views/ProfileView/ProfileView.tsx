@@ -16,6 +16,7 @@ import {connect, useSelector} from 'react-redux';
 import * as commonStyle from '../../utils/commonStyle';
 import User from '../../models/User';
 import auth from "@react-native-firebase/auth";
+import firebase from '@react-native-firebase/app';
 import firestore from "@react-native-firebase/firestore";
 
 const ProfileView = (props: any) => {
