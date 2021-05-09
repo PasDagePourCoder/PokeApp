@@ -93,7 +93,6 @@ const App = () => {
         >
           <Tab.Screen name="Home" component={HomeStackScreen} />
           <Tab.Screen name="MyPokemon" component={MyPokemonStackScreen} />
-          <Tab.Screen name="Presentation" component={PresentationView} />
         </Tab.Navigator>
     )
   }
@@ -122,6 +121,7 @@ const App = () => {
           <MainStack.Screen name={'Home'} component={TabNavigation} options={{headerShown: false}}/>
           <MainStack.Screen name={'Login'} component={LoginView} options={{headerShown: false}}/>
           <MainStack.Screen name={'SignUp'} component={SignUpView} options={{headerShown: false}}/>
+          <MainStack.Screen name={'Presentation'} component={PresentationView} options={{headerShown: false}}/>
         </MainStack.Navigator>
     )
   }

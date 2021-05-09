@@ -45,7 +45,10 @@ const ProfileView = (props: any) => {
                 //@ts-ignore
                 setUser(documentSnapshot.data());
                 //@ts-ignore
-                setImageURL({uri: documentSnapshot.data().image});
+                if (documentSnapshot.data().image !== '') {
+                    //@ts-ignore
+                    setImageURL({uri: documentSnapshot.data().image});
+                }
             });
 
         // Stop listening for updates when no longer required

@@ -32,7 +32,7 @@ const SignUpView = (props: any) => {
 
                 const action = {type: 'SET_USER_ID', value: uid};
                 dispatch(action);
-                props.navigation.navigate('Home');
+                props.navigation.navigate('Presentation');
             })
             .catch(error => {
                 if (error.code === 'auth/email-already-in-use') {
