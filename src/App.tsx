@@ -43,6 +43,7 @@ import SignUpView from "./views/SignUpView/SignUpView";
 import ProfileView from "./views/ProfileView/ProfileView";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PresentationView from "./views/onBoarding/PresentationView";
+import TrainersList from "./views/TrainersList/TrainersList";
 
 const App = () => {
 
@@ -82,6 +83,8 @@ const App = () => {
                   return <FontAwesomeIcon name="home" size={size} color={color}/>
                 } else if (route.name === 'MyPokemon') {
                   return <MaterialCommunityIcons name="pokeball" size={size} color={color}/>
+                } else if (route.name === 'Autres Dresseurs') {
+                  return <FontAwesomeIcon name="users" size={size} color={color}/>
                 }
 
               },
@@ -93,6 +96,7 @@ const App = () => {
         >
           <Tab.Screen name="Home" component={HomeStackScreen} />
           <Tab.Screen name="MyPokemon" component={MyPokemonStackScreen} />
+          <Tab.Screen name="Autres Dresseurs" component={TrainersStackScreen} />
         </Tab.Navigator>
     )
   }
@@ -102,13 +106,26 @@ const App = () => {
   function MyPokemonStackScreen() {
     return (
       <MyPokemonStack.Navigator>
-        <MyPokemonStack.Screen name="MyPokemon" component={MyPokemonView} options={{title: 'My Pokemon Team'}}/>
+        <MyPokemonStack.Screen name="MyPokemon" component={MyPokemonView} options={{title: 'My Pokemon Team', headerLeft: ()=> null}}/>
         <MyPokemonStack.Screen name="Details" component={PokemonDetailsView} options={{title: 'Characteristics of the Pokemon'}} />
       </MyPokemonStack.Navigator>
     );
   }
 
-  const Tab = createBottomTabNavigator();
+
+    const TrainersStack = createStackNavigator();
+
+    function TrainersStackScreen() {
+        return (
+            <TrainersStack.Navigator>
+                <TrainersStack.Screen name="TrainersList" component={TrainersList} options={{title: 'Autres Dresseurs', headerLeft: ()=> null}}/>
+                <TrainersStack.Screen name="TrainerDetails" component={PokemonDetailsView} options={{title: 'Details'}} />
+            </TrainersStack.Navigator>
+        );
+    }
+
+
+    const Tab = createBottomTabNavigator();
 
   //@ts-ignore
   let persistor = persistStore(Store);
