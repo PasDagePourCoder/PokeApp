@@ -44,6 +44,7 @@ import ProfileView from "./views/ProfileView/ProfileView";
 import Icon from 'react-native-vector-icons/FontAwesome';
 import PresentationView from "./views/onBoarding/PresentationView";
 import TrainersList from "./views/TrainersList/TrainersList";
+import TrainerDetailsView from "./views/TrainersList/TrainersDetailsView";
 
 const App = () => {
 
@@ -119,7 +120,7 @@ const App = () => {
         return (
             <TrainersStack.Navigator>
                 <TrainersStack.Screen name="TrainersList" component={TrainersList} options={{title: 'Autres Dresseurs', headerLeft: ()=> null}}/>
-                <TrainersStack.Screen name="TrainerDetails" component={PokemonDetailsView} options={{title: 'Details'}} />
+                <TrainersStack.Screen name="TrainerDetails" component={TrainerDetailsView} options={{title: 'Details'}} />
             </TrainersStack.Navigator>
         );
     }

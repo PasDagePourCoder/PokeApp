@@ -31,12 +31,9 @@ const TrainersList = (props: any) => {
         getUserFromFirebase();
     }, []);
 
-    const onViewPokemonDetails = (idPokemon: number, namePokemon: string, srcPokemon: string) => {
-        props.navigation.navigate('Details', {
-            id: idPokemon,
-            name: namePokemon,
-            src: srcPokemon,
-            isReleasePossible: true
+    const onViewTrainer = (otherUser: User) => {
+        props.navigation.navigate('TrainerDetails', {
+            otherUser: otherUser
         });
     };
 
@@ -56,11 +53,7 @@ const TrainersList = (props: any) => {
                     });
                 });
                 listUsers = listUsers.filter((user: User) => user.id !== currentUserID);
-
                 setTrainersList(shuffle(listUsers));
-
-
-                console.log('List Users: ', listUsers);
                 console.log('Users have been received.');
             });
     }
@@ -71,21 +64,22 @@ const TrainersList = (props: any) => {
                 data={trainersList}
                 keyExtractor={item => item.id.toString()}
                 renderItem={({ item }) =>
-                    <TrainerItem userDetail={item}/>}
+                    <TrainerItem userDetail={item} onViewTrainer={onViewTrainer}/>}
             />
         </View>
     );
 };
 
 interface IProps {
-    userDetail: User
+    userDetail: User,
+    onViewTrainer: any
 }
 
-const TrainerItem = ({userDetail}: IProps) => {
+const TrainerItem = ({userDetail, onViewTrainer}: IProps) => {
 
     return (
         <View>
-            <TouchableOpacity style={styles.main_container} onPress={() => console.log('Click on User')}>
+            <TouchableOpacity style={styles.main_container} onPress={() => onViewTrainer(userDetail)}>
                 <Image
                     style={styles.image}
                     source={{ uri: userDetail.image }}
