@@ -33,7 +33,8 @@ const TrainersList = (props: any) => {
 
     const onViewTrainer = (otherUser: User) => {
         props.navigation.navigate('TrainerDetails', {
-            otherUser: otherUser
+            otherUser: otherUser,
+            currentUserID: currentUserID
         });
     };
 
