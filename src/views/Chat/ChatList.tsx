@@ -19,80 +19,95 @@ import * as commonStyle from '../../utils/commonStyle';
 import firestore from "@react-native-firebase/firestore";
 import User from "../../models/User";
 import {shuffle} from "../../utils/utils";
+import Chat from "../../models/Chat";
 
 const ChatList = (props: any) => {
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [trainersList, setTrainersList] = useState<User[]>([]);
+    const [chatList, setChatList] = useState<Chat[]>([]);
     const currentUserID = useSelector((state: any) => state.userIDStore.userID);
 
 
     useEffect(() => {
-        getUserFromFirebase();
+        getChatListFromUser();
     }, []);
 
-    const onViewTrainer = (otherUser: User) => {
+    const onViewChat = (chatDetail: Chat) => {
         props.navigation.navigate('ChatDetail', {
-            otherUser: otherUser,
+            chatDetail: chatDetail,
             currentUserID: currentUserID
         });
     };
 
-    const getUserFromFirebase = () => {
-        console.log('Querying People from Firebase');
-        // noinspection JSUnresolvedFunction
-        firestore().collection('users')
-            .limit(100)
-            .get()
-            .then(querySnapshot => {
-                let listUsers: User[] = [];
+    const getChatListFromUser = () => {
+        console.log('Querying Chat');
+        let listChatReceivedFirebase: Chat[] = [];
+        firestore().collection('users').doc(currentUserID).collection('chats')
+            .onSnapshot(querySnapshot => {
+                const listChatsNameCurrentUser: String[] = [];
                 querySnapshot.forEach(doc => {
-                    //@ts-ignore
-                    listUsers.push({
-                        id: doc.id,
-                        ...doc.data(),
-                    });
+                    listChatsNameCurrentUser.push(doc.id);
                 });
-                listUsers = listUsers.filter((user: User) => user.id !== currentUserID);
-                setTrainersList(shuffle(listUsers));
-                console.log('Users have been received.');
+                console.log('[CHAT] Get the Chat Name List of the User.');
+                console.log(listChatsNameCurrentUser);
+
+                // Firestore
+                firestore().collection('chats')
+                    .where('chat_id', 'in', listChatsNameCurrentUser)
+                    .get()
+                    .then(querySnapshot => {
+                        querySnapshot.forEach(doc => {
+                            //@ts-ignore
+                            listChatReceivedFirebase.push({
+                                chat_id: doc.id,
+                                ...doc.data(),
+                            });
+                        });
+                        console.log('List Chat Received From Firebase', listChatReceivedFirebase);
+                        setChatList(listChatReceivedFirebase);
+                    });
             });
-    }
+    };
 
     return (
         <View>
             <FlatList
-                data={trainersList}
-                keyExtractor={item => item.id.toString()}
+                data={chatList}
+                keyExtractor={item => item.chat_id.toString()}
                 renderItem={({ item }) =>
-                    <TrainerItem userDetail={item} onViewTrainer={onViewTrainer}/>}
+                    <ChatItem chatDetail={item} onViewChat={onViewChat} currentUserID={currentUserID}/>}
             />
         </View>
     );
 };
 
 interface IProps {
-    userDetail: User,
-    onViewTrainer: any
+    chatDetail: Chat,
+    onViewChat: any,
+    currentUserID: string
 }
 
-const TrainerItem = ({userDetail, onViewTrainer}: IProps) => {
+const ChatItem = ({chatDetail, onViewChat, currentUserID}: IProps) => {
+    let imageOtherUser;
+    let nameOtherUser;
+    if (currentUserID === chatDetail.id_1) {
+        imageOtherUser = chatDetail.image_2;
+        nameOtherUser = chatDetail.name_2;
+    } else {
+        imageOtherUser = chatDetail.image_1;
+        nameOtherUser = chatDetail.name_1;
+    }
 
     return (
         <View>
-            <TouchableOpacity style={styles.main_container} onPress={() => onViewTrainer(userDetail)}>
+            <TouchableOpacity style={styles.main_container} onPress={() => onViewChat(chatDetail)}>
                 <Image
                     style={styles.image}
-                    source={{ uri: userDetail.image }}
+                    source={{ uri: imageOtherUser }}
                 />
                 <View style={styles.content_container}>
                     <View style={styles.header_container}>
-                        <Text style={styles.title_text}>{userDetail.name}</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.level_text}>
-                            Pokémon favori: {userDetail.favoritePokemon}
-                        </Text>
+                        <Text style={styles.title_text}>{nameOtherUser}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
