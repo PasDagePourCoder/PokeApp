@@ -45,6 +45,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import PresentationView from "./views/onBoarding/PresentationView";
 import TrainersList from "./views/TrainersList/TrainersList";
 import TrainerDetailsView from "./views/TrainersList/TrainersDetailsView";
+import ChatList from "./views/Chat/ChatList";
+import ChatDetail from "./views/Chat/ChatDetail";
 
 const App = () => {
 
@@ -86,6 +88,8 @@ const App = () => {
                   return <MaterialCommunityIcons name="pokeball" size={size} color={color}/>
                 } else if (route.name === 'Autres Dresseurs') {
                   return <FontAwesomeIcon name="users" size={size} color={color}/>
+                } else if (route.name === 'Chats') {
+                    return <MaterialCommunityIcons name="chat" size={size} color={color}/>
                 }
 
               },
@@ -98,6 +102,7 @@ const App = () => {
           <Tab.Screen name="Home" component={HomeStackScreen} />
           <Tab.Screen name="MyPokemon" component={MyPokemonStackScreen} />
           <Tab.Screen name="Autres Dresseurs" component={TrainersStackScreen} />
+          <Tab.Screen name="Chats" component={ChatStackScreen} />
         </Tab.Navigator>
     )
   }
@@ -124,6 +129,19 @@ const App = () => {
             </TrainersStack.Navigator>
         );
     }
+
+
+    const ChatStack = createStackNavigator();
+
+    function ChatStackScreen() {
+        return (
+            <ChatStack.Navigator>
+                <ChatStack.Screen name="ChatList" component={ChatList} options={{title: 'Chats', headerLeft: ()=> null}}/>
+                <ChatStack.Screen name="ChatDetail" component={ChatDetail} options={{title: 'Liste des messages'}} />
+            </ChatStack.Navigator>
+        );
+    }
+
 
 
     const Tab = createBottomTabNavigator();
