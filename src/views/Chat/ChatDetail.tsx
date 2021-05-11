@@ -24,6 +24,7 @@ import {
 } from "../../services/chatService";
 import {getFormattedDate} from "../../utils/utils";
 import Message from "../../models/Message";
+import { moderateScale } from 'react-native-size-matters';
 
 const ChatDetail = (props: any) => {
 
@@ -55,6 +56,32 @@ const ChatDetail = (props: any) => {
         });
     }
 
+    const _renderMessageItem = (message: Message) => {
+        if (currentUserID === message.senderID) {
+            return (
+                <View style={[styles.item, styles.itemOut]}>
+                    {/* eslint-disable-next-line react-native/no-inline-styles */}
+                    <View style={[styles.balloon, {backgroundColor: '#1084ff'}]}>
+                        <Text style={styles.text_message_bubble}>{message.textMessage}</Text>
+                    </View>
+
+                    {/*{this._renderArrowRight()}*/}
+                </View>
+            );
+        } else {
+            return (
+                <View style={[styles.item, styles.itemIn]}>
+                    {/* eslint-disable-next-line react-native/no-inline-styles */}
+                    <View style={[styles.balloon, {backgroundColor: 'grey'}]}>
+                        <Text style={styles.text_message_bubble}>{message.textMessage}</Text>
+                    </View>
+                    {/*// https://stackoverflow.com/questions/50465450/chat-bubble-in-react-native*/}
+                    {/*{this._renderArrowLeft()}*/}
+                </View>            );
+        }
+    };
+
+
     const sendTextMessage = () => {
         console.log('[CHAT] Send a text message.');
         const messageID: string = 'message_' + getFormattedDate();
@@ -78,7 +105,7 @@ const ChatDetail = (props: any) => {
                 keyExtractor={item => item.id.toString()}
                 renderItem={({item}) =>
                     <View>
-                        <Text>{item.textMessage}</Text>
+                        {_renderMessageItem(item)}
                     </View>
                 }
             />
@@ -114,6 +141,55 @@ const styles = StyleSheet.create({
         paddingHorizontal:10,
         padding:5,
     },
+
+    // Bubble Chat
+    item: {
+        marginVertical: moderateScale(7, 2),
+        flexDirection: 'row',
+    },
+    itemIn: {
+        marginLeft: 20,
+    },
+    itemOut: {
+        alignSelf: 'flex-end',
+        marginRight: 20,
+    },
+    balloon: {
+        maxWidth: moderateScale(250, 2),
+        paddingHorizontal: moderateScale(10, 2),
+        paddingTop: moderateScale(5, 2),
+        paddingBottom: moderateScale(7, 2),
+        borderRadius: 20,
+    },
+    arrowContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: -1,
+        flex: 1,
+    },
+    arrowLeftContainer: {
+        justifyContent: 'flex-end',
+        alignItems: 'flex-start',
+    },
+    arrowRightContainer: {
+        justifyContent: 'flex-end',
+        alignItems: 'flex-end',
+    },
+    arrowLeft: {
+        left: moderateScale(-6, 0.5),
+    },
+    arrowRight: {
+        right:moderateScale(-6, 0.5),
+    },
+    text_message_bubble: {
+        paddingTop: 5,
+        color: 'white',
+    },
+    // End Chat Bubbles
+
 
     // Buttons related
     btnSend:{
